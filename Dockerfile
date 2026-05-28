@@ -1,12 +1,8 @@
-FROM golang:1.22-alpine AS builder
-
+FROM golang:1.26-alpine AS builder
 WORKDIR /app
-COPY go.mod go.sum ./
+COPY ./app .
 RUN go mod download
-
-COPY . .
-# Compilação estática para garantir execução leve
-RUN CGO_ENABLED=0 GOOS=linux go build -o mcp-server main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o mcp-server server.go
 
 FROM alpine:latest
 WORKDIR /app

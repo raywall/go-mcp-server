@@ -2,3 +2,4 @@
 *.prof
 *.test
 bin/
+bench_results.*
