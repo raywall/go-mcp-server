@@ -6,14 +6,16 @@ include assets/mcp.mk
 
 # Sobe os containers de banco de dados
 start:
-	@echo "Subindo Postgres e DynamoDB Local..."; \
+	@set -Eeuo pipefail; \
+	 echo "Subindo Postgres e DynamoDB Local..."; \
 	 docker-compose up -d; \
 	 echo "Aguardando inicialização (5s)..."; \
 	 sleep 5;
 
 # Derruba a infraestrutura
 stop:
-	@docker-compose down -v;
+	@set -Eeuo pipefail; \
+	 docker-compose down -v;
 
 # Fluxo completo
 all: start import-rules seed bench

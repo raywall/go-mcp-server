@@ -2,7 +2,8 @@
 
 # Cria tabelas no DynamoDB e injeta a massa de teste (Regras e Dados)
 seed:
-	@echo "--- Preparando Tabela de Baixas (Liquidations) ---"; \
+	@set -Eeuo pipefail; \
+	 echo "--- Preparando Tabela de Baixas (Liquidations) ---"; \
 	 aws dynamodb create-table --endpoint-url http://localhost:8000 \
 		--table-name liquidations \
 		--attribute-definitions AttributeName=cpf,AttributeType=S AttributeName=sk_date,AttributeType=S \
@@ -17,6 +18,14 @@ seed:
 
 # Popula o DynamoDB lendo os YAMLs do repositório
 import-rules:
-	@echo "Lendo YAMLs e gravando regras no DynamoDB..."; \
+	@set -Eeuo pipefail; \
+	 echo "--- Preparando Tabela de Regras (business_rules) ---"; \
+	 aws dynamodb create-table --endpoint-url http://localhost:8000 \
+		--table-name business_rules \
+		--attribute-definitions AttributeName=domain,AttributeType=S AttributeName=execution_order,AttributeType=N \
+		--key-schema AttributeName=domain,KeyType=HASH AttributeName=execution_order,KeyType=RANGE \
+		--billing-mode PAY_PER_REQUEST --region us-east-1 > /dev/null 2>&1 || true; \
+	 echo "--- Lendo YAMLs e gravando regras no DynamoDB ---"; \
+	 echo "Lendo YAMLs e gravando regras no DynamoDB..."; \
 	 cd app; \
-	 go run . --mode=import;
+	 go run . --mode import;
