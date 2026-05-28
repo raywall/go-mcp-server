@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"sync"
 	"time"
 
@@ -101,6 +103,18 @@ type TransactionContext struct {
 
 func main() {
 	ctx := context.Background()
+	mode := flag.String("mode", "server", "Modo de execução: 'server' ou 'import'")
+	repo := flag.String("rules", "./rules", "Diretório dos arquivos de regras YAML")
+
+	flag.Parse()
+
+	// Validação do modo de execução
+	if *mode != "server" && *mode != "import" {
+		log.Fatalf("Modo inválido: %s. Use 'server' ou 'import'.", *mode)
+	} else if *mode == "import" {
+		importRules(*repo)
+		os.Exit(0)
+	}
 
 	// Inicializa Postgres (Dados de Pagamentos)
 	pgDB, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/bank_data?sslmode=disable")

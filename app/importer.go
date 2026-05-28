@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"flag"
 	"io/fs"
 	"log"
 	"os"
@@ -50,20 +49,7 @@ type RuleDocument struct {
 	} `yaml:"technical_metadata" dynamodbav:"technical_metadata"`
 }
 
-func init() {
-	mode := flag.String("mode", "server", "Modo de execução: 'server' ou 'import'")
-
-	flag.Parse()
-
-	if *mode != "server" && *mode != "import" {
-		log.Fatalf("Modo inválido: %s. Use 'server' ou 'import'.", *mode)
-	} else if *mode == "import" {
-		importRules()
-		os.Exit(0)
-	}
-}
-
-func importRules() {
+func importRules(rulesDir string) {
 	ctx := context.Background()
 	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("us-east-1"))
 	if err != nil {
@@ -73,9 +59,6 @@ func importRules() {
 	dynamoClient := dynamodb.NewFromConfig(cfg, func(o *dynamodb.Options) {
 		o.BaseEndpoint = aws.String("http://localhost:8000")
 	})
-
-	// Caminho onde os YAMLs ficarão armazenados
-	rulesDir := "./rules"
 
 	err = filepath.WalkDir(rulesDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil || d.IsDir() || filepath.Ext(path) != ".yaml" {

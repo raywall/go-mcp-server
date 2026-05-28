@@ -19,4 +19,4 @@ seed:
 import-rules:
 	@echo "Lendo YAMLs e gravando regras no DynamoDB..."; \
 	 cd app; \
-	 go run server.go --mode=import;
+	 go run . --mode=import;
