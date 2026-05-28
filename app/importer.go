@@ -52,6 +52,9 @@ type RuleDocument struct {
 
 func init() {
 	mode := flag.String("mode", "server", "Modo de execução: 'server' ou 'import'")
+
+	flag.Parse()
+
 	if *mode != "server" && *mode != "import" {
 		log.Fatalf("Modo inválido: %s. Use 'server' ou 'import'.", *mode)
 	} else if *mode == "import" {
