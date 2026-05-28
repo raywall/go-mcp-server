@@ -27,7 +27,7 @@ define PAYLOAD
 }
 endef
 
-infer: build import-rules seed-data
+infer: build
 	@echo "=== Acionando o MCP Server para Validação ==="; \
 	 echo '$$PAYLOAD' | ./mcp-server | jq -r '.result.content[0].text' | jq .
 
