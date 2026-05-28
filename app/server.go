@@ -30,11 +30,39 @@ type App struct {
 // Abstrações de Domínio (Agrupamento de Dados)
 // ==========================================
 
-// Rule abstrai a regra de negócio vinda do DynamoDB
+// Rule agrupa de forma estruturada as diretrizes de negócio, engenharia e lógica de IA
 type Rule struct {
+	RuleID         string `dynamodbav:"rule_id" json:"rule_id"`
 	Domain         string `dynamodbav:"domain" json:"domain"`
+	Context        string `dynamodbav:"context" json:"context"`
 	ExecutionOrder int    `dynamodbav:"execution_order" json:"execution_order"`
-	Description    string `dynamodbav:"description" json:"description"`
+	Status         string `dynamodbav:"status" json:"status"`
+	AILogic        string `dynamodbav:"ai_logic" json:"ai_logic"`
+
+	HumanContext struct {
+		Name          string `dynamodbav:"name" json:"name"`
+		Description   string `dynamodbav:"description" json:"description"`
+		BusinessOwner string `dynamodbav:"business_owner" json:"business_owner"`
+	} `dynamodbav:"human_context" json:"human_context"`
+
+	EngineeringContext struct {
+		ApplicationName string `dynamodbav:"application_name" json:"application_name"`
+		ApplicationType string `dynamodbav:"application_type" json:"application_type"`
+		RepositoryURL   string `dynamodbav:"repository_url" json:"repository_url"`
+		Entrypoint      string `dynamodbav:"entrypoint" json:"entrypoint"`
+	} `dynamodbav:"engineering_context" json:"engineering_context"`
+
+	TechnicalMetadata struct {
+		Dependencies []struct {
+			System string `dynamodbav:"system" json:"system"`
+			Action string `dynamodbav:"action" json:"action"`
+		} `dynamodbav:"dependencies" json:"dependencies"`
+		Observability struct {
+			DatadogMonitorID string `dynamodbav:"datadog_monitor_id" json:"datadog_monitor_id"`
+			CustomMetric     string `dynamodbav:"custom_metric" json:"custom_metric"`
+			LogMarker        string `dynamodbav:"log_marker" json:"log_marker"`
+		} `dynamodbav:"observability" json:"observability"`
+	} `dynamodbav:"technical_metadata" json:"technical_metadata"`
 }
 
 // LiquidationRecord abstrai os dados operacionais da baixa (DynamoDB)

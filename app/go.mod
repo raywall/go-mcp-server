@@ -9,6 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.57.4
 	github.com/lib/pq v1.12.3
 	github.com/mark3labs/mcp-go v0.54.1
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (

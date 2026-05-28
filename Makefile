@@ -16,4 +16,4 @@ stop:
 	@docker-compose down -v;
 
 # Fluxo completo
-all: start seed bench
+all: start import-rules bench

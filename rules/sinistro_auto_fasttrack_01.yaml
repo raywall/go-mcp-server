@@ -1,0 +1,41 @@
+rule_id: "sinistro_auto_fasttrack_01"
+domain: "seguro_auto"
+context: "aprovacao_orcamento"
+execution_order: 10
+status: "ACTIVE"
+
+# 1. Visão Humana
+human_context:
+  name: "Aprovação Automática Fast-Track (Danos Leves)"
+  description: >
+    Orçamentos de reparo enviados por oficinas referenciadas cujo valor total seja 
+    inferior a R$ 2.500,00 e que não envolvam itens de segurança estrutural (como airbags 
+    ou longarinas) devem ser aprovados automaticamente, sem necessidade de vistoria humana.
+  business_owner: "Squad Sinistros Auto"
+
+# 2. Visão de Engenharia de Software
+engineering_context:
+  application_name: "motor-aprovacao-sinistro"
+  application_type: "lambda"
+  repository_url: "https://github.com/itau/serverless-sinistro-auto"
+  entrypoint: "AprovacaoFastTrackHandler.ts"
+
+# 3. Visão IA
+ai_logic: >
+  Se um orçamento for negado pelo Fast-Track, a IA deve validar duas condições: 
+  1. O valor excedeu R$ 2500? 
+  2. O array de 'pecas_reparo' continha as tags 'AIRBAG' ou 'ESTRUTURAL'? 
+  Se ambas forem FALSAS, o roteamento para vistoria humana foi um BUG do sistema. 
+  Oficinas NÃO referenciadas (flag 'is_referenciada' = false) SEMPRE bypassam essa regra.
+
+# 4. Visão Técnica
+technical_metadata:
+  dependencies:
+    - system: "api-oficinas-referenciadas"
+      action: "validate"
+    - system: "fila-vistoria-humana"
+      action: "route_if_failed"
+  observability:
+    datadog_monitor_id: "11223344"
+    custom_metric: "sinistro.fasttrack.approved"
+    log_marker: "NumeroSinistro"

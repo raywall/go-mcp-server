@@ -1,0 +1,40 @@
+rule_id: "antifraude_velocidade_01"
+domain: "cartoes_credito"
+context: "monitoramento_transacional"
+execution_order: 5
+status: "ACTIVE"
+
+# 1. Visão Humana
+human_context:
+  name: "Bloqueio por Alta Velocidade (Velocity Check)"
+  description: >
+    Se um cartão de crédito realizar 3 ou mais transações online (CNP - Card Not Present) 
+    em um intervalo menor que 5 minutos, e o valor acumulado ultrapassar R$ 500,00, 
+    o cartão deve ser preventivamente bloqueado e o cliente notificado via push.
+  business_owner: "Squad Prevenção a Fraudes"
+
+# 2. Visão de Engenharia de Software
+engineering_context:
+  application_name: "flink-fraud-detector"
+  application_type: "flink_streaming"
+  repository_url: "https://github.com/itau/flink-fraud-velocity"
+  entrypoint: "VelocityWindowFunction.scala"
+
+# 3. Visão IA
+ai_logic: >
+  Ao analisar logs de recusa de transação, se houver o código de erro '99-FRAUD_VELOCITY', 
+  verifique a janela temporal das últimas 3 transações. O bloqueio é CONSIDERADO CORRETO se 
+  o delta de tempo for < 5 minutos e a soma > R$ 500. A ausência de envio de notificação 
+  (Push) após esse bloqueio é uma FALHA do sistema de mensageria, não do motor de fraude.
+
+# 4. Visão Técnica
+technical_metadata:
+  dependencies:
+    - system: "mensageria-push-api"
+      action: "trigger"
+    - system: "autorizador-mainframe"
+      action: "block"
+  observability:
+    datadog_monitor_id: "44556677"
+    custom_metric: "fraud.velocity.blocks"
+    log_marker: "CardId_Hash"

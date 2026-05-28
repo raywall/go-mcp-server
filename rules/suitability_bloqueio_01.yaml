@@ -1,0 +1,40 @@
+rule_id: "suitability_bloqueio_01"
+domain: "investimentos"
+context: "ordem_compra"
+execution_order: 1
+status: "ACTIVE"
+
+# 1. Visão Humana
+human_context:
+  name: "Bloqueio de Compra (Desenquadramento de Suitability)"
+  description: >
+    É proibida a execução de ordens de compra de ativos de Risco Alto (como Ações e Derivativos) 
+    para clientes que possuam o perfil de investidor 'CONSERVADOR', a menos que o cliente 
+    tenha assinado o Termo de Desenquadramento Eletrônico no dia da operação.
+  business_owner: "Squad Compliance & Suitability"
+
+# 2. Visão de Engenharia de Software
+engineering_context:
+  application_name: "validador-ordens-bolsa"
+  application_type: "ecs"
+  repository_url: "https://github.com/itau/investimentos-validador-ordens"
+  entrypoint: "SuitabilityInterceptor.go"
+
+# 3. Visão IA
+ai_logic: >
+  Se a API de ordens retornar HTTP 403 (Forbidden) com o código 'SUITABILITY_MISMATCH', 
+  a IA deve buscar na tabela de 'termos_aceites' se existe um registro para o CPF na 
+  data atual. Se o termo existir E a ordem for recusada, houve falha de latência na replicação 
+  do cache do termo de aceite para o motor de ordens.
+
+# 4. Visão Técnica
+technical_metadata:
+  dependencies:
+    - system: "cache-termos-aceite"
+      action: "read"
+    - system: "api-perfil-investidor"
+      action: "read"
+  observability:
+    datadog_monitor_id: "99887766"
+    custom_metric: "investimentos.suitability.blocks"
+    log_marker: "OrderId"
