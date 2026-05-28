@@ -11,22 +11,25 @@
 
 <body>
 
-  <aside>
+  <aside id="sidebar">
     <div class="sidebar-header">
       <h2>Rules Catalog</h2>
       <div class="upload-btn-wrapper">
         <label for="folderInput" class="btn-upload">Selecionar Pasta (YAML)</label>
         <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" />
       </div>
+      <button class="btn-clear" onclick="clearLocalDB()">Limpar Memória</button>
     </div>
     <div class="rule-list" id="ruleList">
     </div>
   </aside>
 
+  <div class="resizer" id="dragMe"></div>
+
   <main>
     <div id="emptyState" class="empty-state">
-      <h3>Nenhuma regra selecionada</h3>
-      <p>Selecione a pasta contendo os arquivos YAML para visualizar.</p>
+      <h3>Nenhuma regra carregada</h3>
+      <p>Selecione a pasta contendo os arquivos YAML ou aguarde o carregamento automático da memória.</p>
     </div>
 
     <div id="formContainer" class="form-container">

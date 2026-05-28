@@ -5,7 +5,8 @@
   --text-dark: #333333;
   --text-muted: #666666;
   --border-color: #E1E4E8;
-  --sidebar-width: 320px;
+  --sidebar-width: 380px;
+  /* Um pouco mais largo por padrão para caber os novos cards */
 }
 
 * {
@@ -26,38 +27,56 @@ body {
 /* HEADER / SIDEBAR */
 aside {
   width: var(--sidebar-width);
+  min-width: 250px;
+  max-width: 600px;
   background: #FFFFFF;
-  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .sidebar-header {
   padding: 20px;
   background-color: var(--primary);
   color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .sidebar-header h2 {
   font-size: 1.2rem;
-  margin-bottom: 15px;
   text-align: center;
 }
 
-/* BOTÃO DE UPLOAD (LABEL) */
+/* DRAG RESIZER */
+.resizer {
+  width: 5px;
+  background: var(--border-color);
+  cursor: col-resize;
+  z-index: 10;
+  transition: background 0.2s;
+}
+
+.resizer:hover,
+.resizer:active {
+  background: var(--secondary);
+}
+
+/* BOTOES LATERAL */
 .upload-btn-wrapper {
   width: 100%;
   text-align: center;
 }
 
 .btn-upload {
-  display: inline-block;
+  display: block;
   border: 2px dashed rgba(255, 255, 255, 0.5);
   color: white;
   background-color: transparent;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
   font-weight: bold;
   width: 100%;
   cursor: pointer;
@@ -69,7 +88,23 @@ aside {
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* LISTA DE REGRAS */
+.btn-clear {
+  background: rgba(0, 0, 0, 0.2);
+  border: none;
+  color: #FFD1D1;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: 0.2s;
+}
+
+.btn-clear:hover {
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+}
+
+/* LISTA DE REGRAS (NOVO LAYOUT DOS CARDS) */
 .rule-list {
   flex: 1;
   overflow-y: auto;
@@ -86,13 +121,12 @@ aside {
   color: var(--text-muted);
   font-weight: bold;
   margin-bottom: 8px;
-  letter-spacing: 0.5px;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 4px;
 }
 
 .context-group {
-  margin-left: 10px;
+  margin-left: 5px;
   margin-bottom: 10px;
 }
 
@@ -100,41 +134,86 @@ aside {
   font-size: 0.85rem;
   color: var(--primary);
   font-weight: 600;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .rule-item {
-  padding: 8px 12px;
-  margin-bottom: 4px;
-  background: var(--bg-light);
-  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9rem;
   transition: 0.2s;
-  border-left: 3px solid transparent;
+  border-left: 4px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .rule-item:hover {
-  background: #E9ECEF;
+  border-color: var(--primary);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .rule-item.active {
-  background: #E3EFFF;
+  background: #F0F6FF;
   border-left-color: var(--secondary);
-  color: var(--primary);
+  border-right-color: var(--primary);
+  border-top-color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* Detalhes internos do card da regra */
+.rule-name {
+  font-size: 0.9rem;
   font-weight: 600;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .order-badge {
-  background: #D1D5DB;
-  color: #374151;
-  font-size: 0.7rem;
+  background: var(--primary);
+  color: white;
+  font-size: 0.65rem;
   padding: 2px 6px;
   border-radius: 12px;
-  margin-right: 6px;
+  font-weight: bold;
 }
 
-/* ÁREA PRINCIPAL (FORMULÁRIO) */
+.rule-id {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  margin-bottom: 6px;
+}
+
+.rule-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.7rem;
+  border-top: 1px dashed var(--border-color);
+  padding-top: 6px;
+}
+
+.badge-context {
+  background: #E1E4E8;
+  color: #4A5568;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.badge-owner {
+  color: var(--secondary);
+  font-weight: 600;
+}
+
+/* ÁREA PRINCIPAL (FORMULÁRIO) - MANTIDO */
 main {
   flex: 1;
   display: flex;
@@ -231,12 +310,6 @@ textarea {
   line-height: 1.5;
 }
 
-input:focus,
-textarea:focus {
-  outline: none;
-}
-
-/* NAVEGAÇÃO */
 .navigation {
   display: flex;
   justify-content: space-between;
