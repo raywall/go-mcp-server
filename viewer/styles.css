@@ -1,8 +1,6 @@
 :root {
   --primary: #0047BB;
-  /* Azul corporativo base */
   --secondary: #EC7000;
-  /* Laranja de destaque */
   --bg-light: #F4F5F7;
   --text-dark: #333333;
   --text-muted: #666666;
@@ -42,18 +40,18 @@ aside {
 
 .sidebar-header h2 {
   font-size: 1.2rem;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-/* BOTÃO DE UPLOAD */
+/* BOTÃO DE UPLOAD (LABEL) */
 .upload-btn-wrapper {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
   width: 100%;
+  text-align: center;
 }
 
 .btn-upload {
+  display: inline-block;
   border: 2px dashed rgba(255, 255, 255, 0.5);
   color: white;
   background-color: transparent;
@@ -69,16 +67,6 @@ aside {
 .btn-upload:hover {
   border-color: white;
   background: rgba(255, 255, 255, 0.1);
-}
-
-.upload-btn-wrapper input[type=file] {
-  font-size: 100px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  cursor: pointer;
-  height: 100%;
 }
 
 /* LISTA DE REGRAS */
@@ -235,7 +223,6 @@ textarea {
   color: var(--text-dark);
   font-size: 0.95rem;
   pointer-events: none;
-  /* Torna visualmente read-only */
 }
 
 textarea {

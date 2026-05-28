@@ -1,71 +1,78 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Regras de Negócio</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-    <link rel="stylesheet" href="./styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo de Regras de Negócio</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-    <aside>
-        <div class="sidebar-header">
-            <h2>Rules Catalog</h2>
-            <div class="upload-btn-wrapper">
-                <button class="btn-upload">Selecionar Pasta (YAML)</button>
-                <input type="file" id="folderInput" webkitdirectory directory multiple accept=".yaml,.yml" />
-            </div>
+  <aside>
+    <div class="sidebar-header">
+      <h2>Rules Catalog</h2>
+      <div class="upload-btn-wrapper">
+        <label for="folderInput" class="btn-upload">Selecionar Pasta (YAML)</label>
+        <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" />
+      </div>
+    </div>
+    <div class="rule-list" id="ruleList">
+    </div>
+  </aside>
+
+  <main>
+    <div id="emptyState" class="empty-state">
+      <h3>Nenhuma regra selecionada</h3>
+      <p>Selecione a pasta contendo os arquivos YAML para visualizar.</p>
+    </div>
+
+    <div id="formContainer" class="form-container">
+      <div class="form-header">
+        <h1 id="f_rule_id">RULE_ID</h1>
+        <span class="status-badge" id="f_status">ACTIVE</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group"><label>Domínio</label><input type="text" id="f_domain" readonly></div>
+        <div class="form-group"><label>Contexto</label><input type="text" id="f_context" readonly></div>
+        <div class="form-group"><label>Ordem de Execução</label><input type="text" id="f_execution_order" readonly>
         </div>
-        <div class="rule-list" id="ruleList">
-            </div>
-    </aside>
+        <div class="form-group"><label>Owner</label><input type="text" id="f_owner" readonly></div>
+      </div>
 
-    <main>
-        <div id="emptyState" class="empty-state">
-            <h3>Nenhuma regra selecionada</h3>
-            <p>Selecione a pasta contendo os arquivos YAML para visualizar.</p>
-        </div>
+      <h3 class="section-title">1. Visão Humana</h3>
+      <div class="form-group full"><label>Nome da Regra</label><input type="text" id="f_name" readonly></div>
+      <div class="form-group full"><label>Descrição de Negócio</label><textarea id="f_description" readonly></textarea>
+      </div>
 
-        <div id="formContainer" class="form-container">
-            <div class="form-header">
-                <h1 id="f_rule_id">RULE_ID</h1>
-                <span class="status-badge" id="f_status">ACTIVE</span>
-            </div>
+      <h3 class="section-title">2. Visão de Engenharia</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Aplicação</label><input type="text" id="f_app_name" readonly></div>
+        <div class="form-group"><label>Tipo</label><input type="text" id="f_app_type" readonly></div>
+        <div class="form-group full"><label>Repositório</label><input type="text" id="f_repo" readonly></div>
+        <div class="form-group full"><label>Entrypoint (Classe/Arquivo)</label><input type="text" id="f_entrypoint"
+            readonly></div>
+      </div>
 
-            <div class="form-grid">
-                <div class="form-group"><label>Domínio</label><input type="text" id="f_domain" readonly></div>
-                <div class="form-group"><label>Contexto</label><input type="text" id="f_context" readonly></div>
-                <div class="form-group"><label>Ordem de Execução</label><input type="text" id="f_execution_order" readonly></div>
-                <div class="form-group"><label>Owner</label><input type="text" id="f_owner" readonly></div>
-            </div>
+      <h3 class="section-title">3. Visão IA & Observabilidade</h3>
+      <div class="form-group full"><label>Lógica Determinística (AI Logic)</label><textarea id="f_ai_logic"
+          style="min-height: 120px;" readonly></textarea></div>
+      <div class="form-grid">
+        <div class="form-group"><label>Datadog Monitor ID</label><input type="text" id="f_monitor" readonly></div>
+        <div class="form-group"><label>Log Marker</label><input type="text" id="f_log_marker" readonly></div>
+      </div>
 
-            <h3 class="section-title">1. Visão Humana</h3>
-            <div class="form-group full"><label>Nome da Regra</label><input type="text" id="f_name" readonly></div>
-            <div class="form-group full"><label>Descrição de Negócio</label><textarea id="f_description" readonly></textarea></div>
+      <div class="navigation">
+        <button class="btn-nav" id="btnPrev" onclick="navigate(-1)">&#8592; Anterior</button>
+        <button class="btn-nav" id="btnNext" onclick="navigate(1)">Próxima &#8594;</button>
+      </div>
+    </div>
+  </main>
 
-            <h3 class="section-title">2. Visão de Engenharia</h3>
-            <div class="form-grid">
-                <div class="form-group"><label>Aplicação</label><input type="text" id="f_app_name" readonly></div>
-                <div class="form-group"><label>Tipo</label><input type="text" id="f_app_type" readonly></div>
-                <div class="form-group full"><label>Repositório</label><input type="text" id="f_repo" readonly></div>
-                <div class="form-group full"><label>Entrypoint (Classe/Arquivo)</label><input type="text" id="f_entrypoint" readonly></div>
-            </div>
-
-            <h3 class="section-title">3. Visão IA & Observabilidade</h3>
-            <div class="form-group full"><label>Lógica Determinística (AI Logic)</label><textarea id="f_ai_logic" style="min-height: 120px;" readonly></textarea></div>
-            <div class="form-grid">
-                <div class="form-group"><label>Datadog Monitor ID</label><input type="text" id="f_monitor" readonly></div>
-                <div class="form-group"><label>Log Marker</label><input type="text" id="f_log_marker" readonly></div>
-            </div>
-
-            <div class="navigation">
-                <button class="btn-nav" id="btnPrev" onclick="navigate(-1)">&#8592; Anterior</button>
-                <button class="btn-nav" id="btnNext" onclick="navigate(1)">Próxima &#8594;</button>
-            </div>
-        </div>
-    </main>
-
-    <script src="./app.js"></script>
+  <script src="app.js"></script>
 </body>
+
 </html>

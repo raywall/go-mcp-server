@@ -1,4 +1,4 @@
-.PHONY: start stop all
+.PHONY: start stop viewer all
 
 include assets/database.mk
 include assets/tests.mk
@@ -16,6 +16,9 @@ start:
 stop:
 	@set -Eeuo pipefail; \
 	 docker-compose down -v;
+
+viewer:
+	@python3 -m http.server --directory viewer 5173
 
 # Fluxo completo
 all: start import-rules seed bench

@@ -1,4 +1,4 @@
-let allRulesFlat = []; // Array linear para navegação Prev/Next
+let allRulesFlat = [];
 let currentIndex = -1;
 
 document.getElementById('folderInput').addEventListener('change', handleFileSelect);
@@ -7,6 +7,7 @@ async function handleFileSelect(event) {
   const files = event.target.files;
   const parsedRules = [];
 
+  // Lendo todos os arquivos selecionados
   for (let file of files) {
     if (file.name.endsWith('.yaml') || file.name.endsWith('.yml')) {
       const text = await file.text();
@@ -21,24 +22,27 @@ async function handleFileSelect(event) {
     }
   }
 
-  processAndRenderRules(parsedRules);
+  if (parsedRules.length > 0) {
+    processAndRenderRules(parsedRules);
+  } else {
+    alert("Nenhum arquivo YAML válido contendo regras foi encontrado na pasta selecionada.");
+  }
 }
 
 function processAndRenderRules(rules) {
   // 1. Organizar e ordenar os dados
-  // Ordenação global: Domínio -> Contexto -> Ordem de Execução
   rules.sort((a, b) => {
     if (a.domain !== b.domain) return a.domain.localeCompare(b.domain);
     if (a.context !== b.context) return a.context.localeCompare(b.context);
     return a.execution_order - b.execution_order;
   });
 
-  allRulesFlat = rules; // Salva o estado linear para navegação
+  allRulesFlat = rules;
 
   // 2. Agrupar para renderização do menu
   const tree = {};
   rules.forEach((rule, index) => {
-    rule._flatIndex = index; // Guarda a posição original
+    rule._flatIndex = index;
     if (!tree[rule.domain]) tree[rule.domain] = {};
     if (!tree[rule.domain][rule.context]) tree[rule.domain][rule.context] = [];
     tree[rule.domain][rule.context].push(rule);
@@ -85,7 +89,7 @@ function loadRule(index) {
   document.getElementById('emptyState').style.display = 'none';
   document.getElementById('formContainer').style.display = 'block';
 
-  // Popula os campos do form
+  // Helper para popular inputs previnindo valores undefined
   const setVal = (id, val) => document.getElementById(id).value = val || '';
 
   document.getElementById('f_rule_id').innerText = rule.rule_id;
