@@ -27,4 +27,4 @@ import-rules:
 		--billing-mode PAY_PER_REQUEST --region us-east-1 > /dev/null 2>&1 || true; \
 	 echo "--- Lendo YAMLs e gravando regras no DynamoDB ---"; \
 	 cd app; \
-	 go run . --mode import;
+	 go run . --mode import --rules ../rules;

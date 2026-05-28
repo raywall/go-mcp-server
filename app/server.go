@@ -117,7 +117,7 @@ func main() {
 	}
 
 	// Inicializa Postgres (Dados de Pagamentos)
-	pgDB, err := sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/bank_data?sslmode=disable")
+	pgDB, err := sql.Open("postgres", "postgres://postgres:postgres@postgres:5432/bank_data?sslmode=disable")
 	if err != nil {
 		log.Fatalf("Erro Postgres: %v", err)
 	}
@@ -126,7 +126,7 @@ func main() {
 	// Inicializa DynamoDB (Regras e Dados de Baixa)
 	cfg, _ := config.LoadDefaultConfig(ctx, config.WithRegion("us-east-1"))
 	dynamoClient := dynamodb.NewFromConfig(cfg, func(o *dynamodb.Options) {
-		o.BaseEndpoint = aws.String("http://localhost:8000")
+		o.BaseEndpoint = aws.String("http://dynamodb:8000")
 	})
 
 	app := &App{DynamoClient: dynamoClient, PostgresDB: pgDB}

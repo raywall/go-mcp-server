@@ -8,7 +8,7 @@
 build:
 	@set -Eeuo pipefail; \
 	 cd app; \
-	 go build -o ../bin/mcp-server .
+	 go build -o ./bin/mcp-server .
 
 # 1. Teste de Inferência via CLI (simula o LLM via terminal)
 # Simula o orquestrador (LLM) fazendo a requisição para a IA validar as inconsistências
