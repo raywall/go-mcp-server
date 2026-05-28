@@ -1,0 +1,12 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/raywall/mcp-server
+cpu: Apple M1
+BenchmarkAnalyzeLiquidationSequential     	      10	 163412508 ns/op	   41110 B/op	     313 allocs/op
+BenchmarkAnalyzeLiquidationSequential-4   	       8	 147248245 ns/op	   43270 B/op	     320 allocs/op
+BenchmarkAnalyzeLiquidationSequential-8   	       8	 139320068 ns/op	   41245 B/op	     311 allocs/op
+BenchmarkAnalyzeLiquidationParallel       	       7	 173756774 ns/op	   44937 B/op	     343 allocs/op
+BenchmarkAnalyzeLiquidationParallel-4     	      26	  45020739 ns/op	   44322 B/op	     337 allocs/op
+BenchmarkAnalyzeLiquidationParallel-8     	      51	  20884680 ns/op	   44878 B/op	     339 allocs/op
+PASS
+ok  	github.com/raywall/mcp-server	13.556s

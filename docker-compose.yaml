@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: rules_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mcp-app:
+    build: .
+    environment:
+      - DB_HOST=db
+    depends_on:
+      - db
+    # Como o MCP se comunica via STDIO, o container em si não expõe porta.
+    # Em produção, ele seria invocado pelo runtime do LLM. 
+    # Aqui, deixamos ativo apenas para fins de teste de build.
+    command: ["./mcp-server"]

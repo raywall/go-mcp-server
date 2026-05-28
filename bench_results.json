@@ -1,0 +1,20 @@
+{"Time":"2026-05-27T21:50:12.365005-03:00","Action":"start","Package":"github.com/raywall/mcp-server"}
+{"Time":"2026-05-27T21:50:12.653036-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"goos: darwin\n"}
+{"Time":"2026-05-27T21:50:12.653208-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"goarch: arm64\n"}
+{"Time":"2026-05-27T21:50:12.653225-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"pkg: github.com/raywall/mcp-server\n"}
+{"Time":"2026-05-27T21:50:12.653253-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"cpu: Apple M1\n"}
+{"Time":"2026-05-27T21:50:12.653272-03:00","Action":"run","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationSequential"}
+{"Time":"2026-05-27T21:50:12.653287-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationSequential","Output":"=== RUN   BenchmarkAnalyzeLiquidationSequential\n"}
+{"Time":"2026-05-27T21:50:12.653307-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationSequential","Output":"BenchmarkAnalyzeLiquidationSequential\n"}
+{"Time":"2026-05-27T21:50:14.027777-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationSequential","Output":"BenchmarkAnalyzeLiquidationSequential     \t       6\t 200190146 ns/op\t   41600 B/op\t     315 allocs/op\n"}
+{"Time":"2026-05-27T21:50:17.222073-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"BenchmarkAnalyzeLiquidationSequential-4   \t       8\t 179306333 ns/op\t   42111 B/op\t     316 allocs/op\n"}
+{"Time":"2026-05-27T21:50:19.355932-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"BenchmarkAnalyzeLiquidationSequential-8   \t      12\t 169942476 ns/op\t   42868 B/op\t     318 allocs/op\n"}
+{"Time":"2026-05-27T21:50:19.356986-03:00","Action":"run","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationParallel"}
+{"Time":"2026-05-27T21:50:19.357107-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationParallel","Output":"=== RUN   BenchmarkAnalyzeLiquidationParallel\n"}
+{"Time":"2026-05-27T21:50:19.357134-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationParallel","Output":"BenchmarkAnalyzeLiquidationParallel\n"}
+{"Time":"2026-05-27T21:50:21.356537-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Test":"BenchmarkAnalyzeLiquidationParallel","Output":"BenchmarkAnalyzeLiquidationParallel       \t       6\t 182422438 ns/op\t   44212 B/op\t     340 allocs/op\n"}
+{"Time":"2026-05-27T21:50:23.069882-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"BenchmarkAnalyzeLiquidationParallel-4     \t      25\t  45650518 ns/op\t   44824 B/op\t     340 allocs/op\n"}
+{"Time":"2026-05-27T21:50:25.444841-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"BenchmarkAnalyzeLiquidationParallel-8     \t      46\t  24165296 ns/op\t   44977 B/op\t     339 allocs/op\n"}
+{"Time":"2026-05-27T21:50:25.44503-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"PASS\n"}
+{"Time":"2026-05-27T21:50:25.447932-03:00","Action":"output","Package":"github.com/raywall/mcp-server","Output":"ok  \tgithub.com/raywall/mcp-server\t13.082s\n"}
+{"Time":"2026-05-27T21:50:25.448119-03:00","Action":"pass","Package":"github.com/raywall/mcp-server","Elapsed":13.083}
