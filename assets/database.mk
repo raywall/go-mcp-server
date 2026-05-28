@@ -26,6 +26,5 @@ import-rules:
 		--key-schema AttributeName=domain,KeyType=HASH AttributeName=execution_order,KeyType=RANGE \
 		--billing-mode PAY_PER_REQUEST --region us-east-1 > /dev/null 2>&1 || true; \
 	 echo "--- Lendo YAMLs e gravando regras no DynamoDB ---"; \
-	 echo "Lendo YAMLs e gravando regras no DynamoDB..."; \
 	 cd app; \
 	 go run . --mode import;
