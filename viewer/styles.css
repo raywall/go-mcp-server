@@ -5,8 +5,7 @@
   --text-dark: #333333;
   --text-muted: #666666;
   --border-color: #E1E4E8;
-  --sidebar-width: 380px;
-  /* Um pouco mais largo por padrão para caber os novos cards */
+  --sidebar-width: 420px;
 }
 
 * {
@@ -27,7 +26,7 @@ body {
 /* HEADER / SIDEBAR */
 aside {
   width: var(--sidebar-width);
-  min-width: 250px;
+  min-width: 320px;
   max-width: 600px;
   background: #FFFFFF;
   display: flex;
@@ -41,15 +40,21 @@ aside {
   color: white;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.sidebar-header h2 {
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-top h2 {
   font-size: 1.2rem;
-  text-align: center;
+  margin: 0;
 }
 
-/* DRAG RESIZER */
+/* RESIZER */
 .resizer {
   width: 5px;
   background: var(--border-color);
@@ -63,7 +68,7 @@ aside {
   background: var(--secondary);
 }
 
-/* BOTOES LATERAL */
+/* BOTOES E BUSCA LATERAL */
 .upload-btn-wrapper {
   width: 100%;
   text-align: center;
@@ -71,9 +76,9 @@ aside {
 
 .btn-upload {
   display: block;
-  border: 2px dashed rgba(255, 255, 255, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.6);
   color: white;
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, 0.05);
   padding: 10px;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -85,26 +90,52 @@ aside {
 
 .btn-upload:hover {
   border-color: white;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .btn-clear {
-  background: rgba(0, 0, 0, 0.2);
+  background: transparent;
   border: none;
-  color: #FFD1D1;
-  padding: 8px;
-  border-radius: 6px;
+  color: #FFB3B3;
+  font-size: 1.1rem;
   cursor: pointer;
-  font-size: 0.8rem;
   transition: 0.2s;
+  padding: 4px;
 }
 
 .btn-clear:hover {
-  background: rgba(0, 0, 0, 0.4);
   color: white;
+  transform: scale(1.1);
 }
 
-/* LISTA DE REGRAS (NOVO LAYOUT DOS CARDS) */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.search-box i {
+  color: rgba(255, 255, 255, 0.7);
+  margin-right: 8px;
+  font-size: 0.9rem;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  color: white;
+  width: 100%;
+  outline: none;
+  font-size: 0.85rem;
+}
+
+.search-box input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* LISTA DE REGRAS E COLLAPSE */
 .rule-list {
   flex: 1;
   overflow-y: auto;
@@ -115,6 +146,38 @@ aside {
   margin-bottom: 15px;
 }
 
+/* Títulos interativos para Colapsar */
+.domain-title,
+.context-title {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+.domain-title:hover,
+.context-title:hover {
+  color: var(--secondary);
+}
+
+.chevron {
+  font-size: 0.75rem;
+  color: #A0AABF;
+  transition: transform 0.3s ease;
+}
+
+/* Lógica visual do Colapso */
+.collapsed>.item-container {
+  display: none;
+}
+
+.collapsed>.domain-title .chevron,
+.collapsed>.context-title .chevron {
+  transform: rotate(-90deg);
+}
+
 .domain-title {
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -122,7 +185,7 @@ aside {
   font-weight: bold;
   margin-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 4px;
+  padding-bottom: 6px;
 }
 
 .context-group {
@@ -135,14 +198,19 @@ aside {
   color: var(--primary);
   font-weight: 600;
   margin-bottom: 8px;
+  padding: 4px 0;
 }
 
+.item-container {
+  margin-top: 4px;
+}
+
+/* CARDS */
 .rule-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
   background: white;
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -154,7 +222,7 @@ aside {
 
 .rule-item:hover {
   border-color: var(--primary);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
 }
 
 .rule-item.active {
@@ -165,39 +233,63 @@ aside {
   border-bottom-color: var(--primary);
 }
 
-/* Detalhes internos do card da regra */
 .rule-name {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-dark);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+
+.rule-badges {
   display: flex;
+  gap: 8px;
   align-items: center;
-  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.badge-context {
+  background: #E1E4E8;
+  color: #4A5568;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .order-badge {
   background: var(--primary);
   color: white;
-  font-size: 0.65rem;
-  padding: 2px 6px;
-  border-radius: 12px;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 4px;
   font-weight: bold;
 }
 
 .rule-id {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   font-family: monospace;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 
 .rule-meta {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
-  font-size: 0.7rem;
+  gap: 6px;
+  font-size: 0.8rem;
   border-top: 1px dashed var(--border-color);
-  padding-top: 6px;
+  padding-top: 8px;
+  flex-wrap: wrap;
+}
+
+.meta-label {
+  color: var(--text-muted);
+  font-size: 0.75rem;
 }
 
 .badge-context {
@@ -213,7 +305,7 @@ aside {
   font-weight: 600;
 }
 
-/* ÁREA PRINCIPAL (FORMULÁRIO) - MANTIDO */
+/* ÁREA PRINCIPAL (FORMULÁRIO) */
 main {
   flex: 1;
   display: flex;
@@ -293,15 +385,14 @@ label {
   margin-bottom: 6px;
 }
 
-input,
-textarea {
+.form-container input,
+.form-container textarea {
   padding: 10px 12px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
   background-color: #F8F9FA;
   color: var(--text-dark);
   font-size: 0.95rem;
-  pointer-events: none;
 }
 
 textarea {

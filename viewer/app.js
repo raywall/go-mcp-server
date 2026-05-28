@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const rules = JSON.parse(savedRules);
       if (rules.length > 0) {
         processAndRenderRules(rules);
-        console.log("Regras carregadas da memória local.");
       }
     } catch (e) {
       console.error("Erro ao ler LocalStorage", e);
@@ -20,12 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function clearLocalDB() {
-  localStorage.removeItem('rulesCatalog');
-  location.reload();
+  if (confirm("Tem certeza que deseja limpar a memória local?")) {
+    localStorage.removeItem('rulesCatalog');
+    location.reload();
+  }
 }
 
 // ==========================================
-// 2. LEITURA DOS ARQUIVOS LOCAIS
+// 2. LEITURA DOS ARQUIVOS E BUSCA
 // ==========================================
 document.getElementById('folderInput').addEventListener('change', async function (event) {
   const files = event.target.files;
@@ -36,33 +37,57 @@ document.getElementById('folderInput').addEventListener('change', async function
       const text = await file.text();
       try {
         const doc = jsyaml.load(text);
-        if (doc && doc.rule_id) {
-          parsedRules.push(doc);
-        }
-      } catch (e) {
-        console.error(`Erro ao parsear ${file.name}:`, e);
-      }
+        if (doc && doc.rule_id) parsedRules.push(doc);
+      } catch (e) { console.error(`Erro ao parsear ${file.name}:`, e); }
     }
   }
 
   if (parsedRules.length > 0) {
-    // Salva no LocalDB para não perder no refresh
-    try {
-      localStorage.setItem('rulesCatalog', JSON.stringify(parsedRules));
-    } catch (e) {
-      alert("Aviso: Muitas regras carregadas. O limite do navegador foi atingido e elas não serão salvas no refresh.");
-    }
+    try { localStorage.setItem('rulesCatalog', JSON.stringify(parsedRules)); } catch (e) { }
     processAndRenderRules(parsedRules);
   } else {
     alert("Nenhum arquivo YAML válido contendo regras foi encontrado.");
   }
 });
 
+document.getElementById('searchInput').addEventListener('input', function (e) {
+  const term = e.target.value.toLowerCase();
+  const items = document.querySelectorAll('.rule-item');
+
+  // 1. Filtra os itens individuais
+  items.forEach(item => {
+    const text = item.textContent.toLowerCase();
+    if (text.includes(term)) {
+      item.style.display = 'flex';
+      if (term !== "") {
+        const domainGroup = item.closest('.domain-group');
+        const contextGroup = item.closest('.context-group');
+        if (domainGroup) domainGroup.classList.remove('collapsed');
+        if (contextGroup) contextGroup.classList.remove('collapsed');
+      }
+    } else {
+      item.style.display = 'none';
+    }
+  });
+
+  // 2. Esconde grupos de Contexto que ficaram vazios
+  document.querySelectorAll('.context-group').forEach(group => {
+    // Pega todos os itens visíveis dentro deste grupo
+    const visibleItems = Array.from(group.querySelectorAll('.rule-item')).filter(i => i.style.display !== 'none');
+    group.style.display = visibleItems.length === 0 && term !== "" ? 'none' : 'block';
+  });
+
+  // 3. Esconde grupos de Domínio que ficaram vazios
+  document.querySelectorAll('.domain-group').forEach(group => {
+    const visibleItems = Array.from(group.querySelectorAll('.rule-item')).filter(i => i.style.display !== 'none');
+    group.style.display = visibleItems.length === 0 && term !== "" ? 'none' : 'block';
+  });
+});
+
 // ==========================================
-// 3. RENDERIZAÇÃO DA INTERFACE (NOVO LAYOUT)
+// 3. RENDERIZAÇÃO E ACCORDION
 // ==========================================
 function processAndRenderRules(rules) {
-  // Ordenação: Domínio -> Contexto -> Ordem
   rules.sort((a, b) => {
     if (a.domain !== b.domain) return a.domain.localeCompare(b.domain);
     if (a.context !== b.context) return (a.context || "").localeCompare(b.context || "");
@@ -70,8 +95,6 @@ function processAndRenderRules(rules) {
   });
 
   allRulesFlat = rules;
-
-  // Agrupamento
   const tree = {};
   rules.forEach((rule, index) => {
     rule._flatIndex = index;
@@ -88,15 +111,33 @@ function processAndRenderRules(rules) {
   for (const domain in tree) {
     const domainDiv = document.createElement('div');
     domainDiv.className = 'domain-group';
-    domainDiv.innerHTML = `<div class="domain-title">${domain}</div>`;
+
+    // onclick injetado para dar toggle na classe .collapsed do parentElement
+    domainDiv.innerHTML = `
+            <div class="domain-title" onclick="this.parentElement.classList.toggle('collapsed')">
+                <span>${domain}</span> 
+                <i class="fas fa-chevron-down chevron"></i>
+            </div>
+            <div class="item-container domain-container"></div>
+        `;
+
+    const dContainer = domainDiv.querySelector('.domain-container');
 
     for (const context in tree[domain]) {
       const contextDiv = document.createElement('div');
       contextDiv.className = 'context-group';
 
-      // Exibe o contexto apenas se não for "Geral" para evitar repetição
+      let cContainer = contextDiv; // Por padrão as regras entram direto aqui
+
       if (context !== "Geral") {
-        contextDiv.innerHTML = `<div class="context-title">${context}</div>`;
+        contextDiv.innerHTML = `
+                    <div class="context-title" onclick="this.parentElement.classList.toggle('collapsed')">
+                        <span>${context}</span>
+                        <i class="fas fa-chevron-down chevron"></i>
+                    </div>
+                    <div class="item-container context-container"></div>
+                `;
+        cContainer = contextDiv.querySelector('.context-container');
       }
 
       tree[domain][context].forEach(rule => {
@@ -104,23 +145,31 @@ function processAndRenderRules(rules) {
         ruleDiv.className = 'rule-item';
         ruleDiv.id = `menu_item_${rule._flatIndex}`;
 
-        // Novo Layout Rica do Card
         const name = rule.human_context?.name || "Regra sem nome";
         const owner = rule.human_context?.business_owner || "Sem Owner";
 
+        // Texto injetado dentro da tag escondida com ID para a busca varrer corretamente
         ruleDiv.innerHTML = `
-                    <div class="rule-name"><span class="order-badge">${rule.execution_order || '-'}</span> ${name}</div>
-                    <div class="rule-id">${rule.rule_id}</div>
-                    <div class="rule-meta">
+                    <div style="display:none">${rule.rule_id} ${rule.context}</div>
+                    
+                    <div class="rule-badges">
                         <span class="badge-context">${context}</span>
+                        <span class="order-badge" title="Ordem de Execução"><i class="fas fa-layer-group"></i> ${rule.execution_order || '-'}</span>
+                    </div>
+                    
+                    <div class="rule-name">${name}</div>
+                    <div class="rule-id">${rule.rule_id}</div>
+                    
+                    <div class="rule-meta">
+                        <span class="meta-label"><i class="fas fa-user-tie"></i> Owner:</span>
                         <span class="badge-owner">${owner}</span>
                     </div>
                 `;
 
         ruleDiv.onclick = () => loadRule(rule._flatIndex);
-        contextDiv.appendChild(ruleDiv);
+        cContainer.appendChild(ruleDiv);
       });
-      domainDiv.appendChild(contextDiv);
+      dContainer.appendChild(contextDiv);
     }
     listEl.appendChild(domainDiv);
   }
@@ -168,40 +217,32 @@ function navigate(direction) {
 }
 
 // ==========================================
-// 5. LÓGICA DE REDIMENSIONAMENTO DA SIDEBAR
+// 5. REDIMENSIONAMENTO (RESIZER)
 // ==========================================
 const resizer = document.getElementById('dragMe');
 const sidebar = document.getElementById('sidebar');
-
 let x = 0;
 let w = 0;
 
 const mouseMoveHandler = function (e) {
   const dx = e.clientX - x;
-  const newWidth = w + dx;
-  // Respeita os limites definidos no CSS (min-width e max-width)
-  sidebar.style.width = `${newWidth}px`;
+  sidebar.style.width = `${w + dx}px`;
 };
 
 const mouseUpHandler = function () {
   document.removeEventListener('mousemove', mouseMoveHandler);
   document.removeEventListener('mouseup', mouseUpHandler);
-  // Opcional: Salvar a nova largura no LocalStorage também!
   localStorage.setItem('sidebarWidth', sidebar.style.width);
 };
 
 resizer.addEventListener('mousedown', function (e) {
   x = e.clientX;
   w = sidebar.getBoundingClientRect().width;
-
   document.addEventListener('mousemove', mouseMoveHandler);
   document.addEventListener('mouseup', mouseUpHandler);
 });
 
-// Restaura a largura salva, se houver
 document.addEventListener('DOMContentLoaded', () => {
   const savedWidth = localStorage.getItem('sidebarWidth');
-  if (savedWidth) {
-    sidebar.style.width = savedWidth;
-  }
+  if (savedWidth) sidebar.style.width = savedWidth;
 });

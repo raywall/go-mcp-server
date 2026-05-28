@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catálogo de Regras de Negócio</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -13,13 +14,26 @@
 
   <aside id="sidebar">
     <div class="sidebar-header">
-      <h2>Rules Catalog</h2>
+      <div class="header-top">
+        <h2>Rules Catalog</h2>
+        <button class="btn-clear" onclick="clearLocalDB()" title="Limpar Memória (Apagar LocalStorage)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
+
       <div class="upload-btn-wrapper">
-        <label for="folderInput" class="btn-upload">Selecionar Pasta (YAML)</label>
+        <label for="folderInput" class="btn-upload">
+          <i class="fas fa-folder-open" style="margin-right: 8px;"></i> Selecionar Pasta (YAML)
+        </label>
         <input type="file" id="folderInput" webkitdirectory directory multiple style="display: none;" />
       </div>
-      <button class="btn-clear" onclick="clearLocalDB()">Limpar Memória</button>
+
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Buscar regra, id ou contexto..." autocomplete="off">
+      </div>
     </div>
+
     <div class="rule-list" id="ruleList">
     </div>
   </aside>
@@ -28,8 +42,9 @@
 
   <main>
     <div id="emptyState" class="empty-state">
+      <i class="fas fa-code-branch" style="font-size: 3rem; color: #E1E4E8; margin-bottom: 15px;"></i>
       <h3>Nenhuma regra carregada</h3>
-      <p>Selecione a pasta contendo os arquivos YAML ou aguarde o carregamento automático da memória.</p>
+      <p>Selecione a pasta contendo os arquivos YAML ou aguarde o carregamento da memória.</p>
     </div>
 
     <div id="formContainer" class="form-container">
@@ -69,8 +84,8 @@
       </div>
 
       <div class="navigation">
-        <button class="btn-nav" id="btnPrev" onclick="navigate(-1)">&#8592; Anterior</button>
-        <button class="btn-nav" id="btnNext" onclick="navigate(1)">Próxima &#8594;</button>
+        <button class="btn-nav" id="btnPrev" onclick="navigate(-1)"><i class="fas fa-arrow-left"></i> Anterior</button>
+        <button class="btn-nav" id="btnNext" onclick="navigate(1)">Próxima <i class="fas fa-arrow-right"></i></button>
       </div>
     </div>
   </main>
